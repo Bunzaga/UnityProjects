@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a774e0f18d22fa941b09cce77ebfb5ed, type: 3}
+  m_Name: SplashScreenControl
+  m_EditorClassIdentifier: 
+  WindowView: {fileID: 2344712929678341603, guid: 9cf0c884a9ac80c43b00e526ac622fb0,
+    type: 3}
+  Instance: {fileID: 0}
+  DrawOrder: 0
+  DestroyOnClose: 0
