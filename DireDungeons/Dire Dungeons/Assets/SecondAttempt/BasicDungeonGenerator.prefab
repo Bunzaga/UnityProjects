@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &652996509656978225
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 652996509656978231}
+  - component: {fileID: 652996509656978224}
+  m_Layer: 0
+  m_Name: BasicDungeonGenerator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &652996509656978231
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 652996509656978225}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &652996509656978224
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 652996509656978225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39b90d7c8891c8b4da0ae5b3487725d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DungeonOptions:
+    Seed: -784454124
+    NRows: 39
+    NCols: 39
+    DungeonLayout: Cross
+    RoomMin: 3
+    RoomMax: 9
+    RoomLayout: Scattered
+    CorridorLayout: Bent
+    RemoveDeadEnds: 50
+    AddStairs: 2
+    MapStyle: Standard
+    CellSize: 3
+  NoneTile: {fileID: 1402931669915617692, guid: 7f1730d3c9719ec469f2dee66ee8d694,
+    type: 3}
+  BlockedTile: {fileID: 1402931669915617692, guid: 8ed8412a65395764ca4929a01486eceb,
+    type: 3}
+  DungeonRoot: {fileID: 652996509656978231}
