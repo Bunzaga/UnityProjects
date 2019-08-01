@@ -37,7 +37,7 @@ namespace DunGen
 
             RoomsCreated = 1;
 
-            yield return StartCoroutine(CreateNewCorridor(currentNode));
+            yield return StartCoroutine(CreateNewSegment(currentNode, true));
 
             currentNode = enterGameObject.GetComponent<DungeonNode>();
             AddNodesToRoot(currentNode);
@@ -47,202 +47,220 @@ namespace DunGen
         private void AddNodesToRoot(DungeonNode node)
         {
             node.transform.SetParent(Root);
-            for (int i = 0, ilen = node.ConnectionPoints.Count; i < ilen; i++)
+            for (int i = 0, ilen = node.ToConnections.Count; i < ilen; i++)
             {
-                if (node.ConnectionPoints[i].NodeTo != null)
+                if (node.ToConnections[i].OtherDungeonNode != null)
                 {
-                    AddNodesToRoot(node.ConnectionPoints[i].NodeTo);
+                    AddNodesToRoot(node.ToConnections[i].OtherDungeonNode);
                 }
             }
         }
 
-        private IEnumerator CreateNewRoom(DungeonNode corridorNode)
+        private IEnumerator CreateNewSegment(DungeonNode fromNode, bool isRoom)
         {
-            List<Connection> optionalConnections = corridorNode.Connections.Where(c => ((int)c.ConnectionType & (int)ConnectionType.Outward) != 0).ToList();
+            List<Connection> fromConnections = fromNode.Connections.Where(c => ((int)c.ConnectionType & (int)ConnectionType.Outward) != 0).ToList();
 
-            for (int i = 0, ilen = optionalConnections.Count; i < ilen; i++)
+            for (int i = 0, ilen = fromConnections.Count; i < ilen; i++)
             {
-                if (optionalConnections[i].ClosedVisual != null)
+                if (fromConnections[i].ClosedVisual != null)
                 {
-                    optionalConnections[i].ClosedVisual.SetActive(true);
+                    if (!fromConnections[i].ClosedVisual.activeInHierarchy)
+                    {
+                        fromConnections[i].ClosedVisual.SetActive(true);
+                    }
                 }
-                if (optionalConnections[i].OpenVisual != null)
+                if (fromConnections[i].OpenVisual != null)
                 {
-                    optionalConnections[i].OpenVisual.SetActive(false);
-                }
-            }
-
-            int rnd = Random.Range(0, optionalConnections.Count);
-
-            Connection currentConnection = optionalConnections[rnd];
-
-            if (currentConnection.ClosedVisual != null)
-            {
-                currentConnection.ClosedVisual.SetActive(false);
-            }
-            if (currentConnection.OpenVisual != null)
-            {
-                currentConnection.OpenVisual.SetActive(true);
-            }
-
-            Transform outwardTransform = currentConnection.Transform;
-
-            RoomsCreated++;
-
-            GameObject room = Instantiate(RoomsCreated < RoomsMax ? Room1.gameObject : EndRoom.gameObject);
-
-            RoomNode roomNode = room.GetComponent<RoomNode>();
-
-            List<Connection> roomConnections = roomNode.Connections.Where(c => ((int)c.ConnectionType & (int)ConnectionType.Inward) != 0).ToList();
-
-            for (int i = 0, ilen = roomConnections.Count; i < ilen; i++)
-            {
-                if (roomConnections[i].ClosedVisual != null)
-                {
-                    roomConnections[i].ClosedVisual.SetActive(true);
-                }
-                if (roomConnections[i].OpenVisual != null)
-                {
-                    roomConnections[i].OpenVisual.SetActive(false);
+                    if (fromConnections[i].OpenVisual.activeInHierarchy)
+                    {
+                        fromConnections[i].OpenVisual.SetActive(false);
+                    }
                 }
             }
 
-            rnd = Random.Range(0, roomConnections.Count);
+            int rnd = Random.Range(0, fromConnections.Count);
 
-            Connection roomConnection = roomConnections[rnd];
+            Connection fromConnection = fromConnections[rnd];
 
-            Transform inwardTransform = roomConnection.Transform;
+            Transform outwardTransform = fromConnection.Transform;
 
-            // check for collisions
-
-            //optionalConnections.Remove(currentConnection);
-            corridorNode.Connections.Remove(currentConnection);
-
-            //roomConnections.Remove(roomConnection);
-            roomNode.Connections.Remove(roomConnection);
-
-            if (roomConnection.ClosedVisual != null)
+            GameObject toGo;
+            if (isRoom)
             {
-                roomConnection.ClosedVisual.SetActive(false);
-            }
-            if (roomConnection.OpenVisual != null)
-            {
-                roomConnection.OpenVisual.SetActive(true);
-            }
-
-            // rotate it...
-            room.transform.rotation = Quaternion.Euler(0, (outwardTransform.eulerAngles.y - inwardTransform.eulerAngles.y) + 180, 0);
-            // move it into place...
-            room.transform.position = outwardTransform.position - (inwardTransform.position - room.transform.position);
-
-            corridorNode.ConnectionPoints.Add(new ConnectionPoint
-            {
-                NodeFrom = corridorNode,
-                NodeTo = roomNode,
-                ConnectionFrom = currentConnection,
-                ConnectionTo = roomConnection
-            });
-
-            //currentNode = roomNode;
-            if (RoomsCreated == RoomsMax)
-            {
-                yield return null;
+                int rndDir = Random.Range(0, 3);
+                toGo = Instantiate((rndDir == 0) ? CorridorStraight.gameObject : rndDir == 1 ? CorridorTurnEast.gameObject : CorridorTurnWest.gameObject);
+                
             }
             else
             {
-                yield return StartCoroutine(CreateNewCorridor(roomNode));
+                toGo = Instantiate(RoomsCreated < RoomsMax-1 ? Room1.gameObject : EndRoom.gameObject);
             }
-        }
 
-        private IEnumerator CreateNewCorridor(DungeonNode roomNode)
-        {
-            List<Connection> optionalConnections = roomNode.Connections.Where(c => ((int)c.ConnectionType & (int)ConnectionType.Outward) != 0).ToList();
+            toGo.transform.position = fromNode.transform.position;
 
-            for (int i = 0, ilen = optionalConnections.Count; i < ilen; i++)
+            DungeonNode toNode = toGo.GetComponent<DungeonNode>();
+
+            List<Connection> toConnections = toNode.Connections.Where(c => ((int)c.ConnectionType & (int)ConnectionType.Inward) != 0).ToList();
+
+            for (int i = 0, ilen = toConnections.Count; i < ilen; i++)
             {
-                if (optionalConnections[i].ClosedVisual != null)
+                if (toConnections[i].ClosedVisual != null)
                 {
-                    optionalConnections[i].ClosedVisual.SetActive(true);
+                    if (!toConnections[i].ClosedVisual.activeInHierarchy)
+                    {
+                        toConnections[i].ClosedVisual.SetActive(true);
+                    }
                 }
-                if (optionalConnections[i].OpenVisual != null)
+                if (toConnections[i].OpenVisual != null)
                 {
-                    optionalConnections[i].OpenVisual.SetActive(false);
-                }
-            }
-
-            int rnd = Random.Range(0, optionalConnections.Count);
-
-            Connection currentConnection = optionalConnections[rnd];
-
-            if (currentConnection.ClosedVisual != null)
-            {
-                currentConnection.ClosedVisual.SetActive(false);
-            }
-            if (currentConnection.OpenVisual != null)
-            {
-                currentConnection.OpenVisual.SetActive(true);
-            }
-
-            Transform outwardTransform = currentConnection.Transform;
-
-            int rndDir = Random.Range(0, 3);
-
-            GameObject corridor = Instantiate((rndDir == 0) ? CorridorStraight.gameObject : rndDir == 1 ? CorridorTurnEast.gameObject : CorridorTurnWest.gameObject);
-
-            CorridorNode corridorNode = corridor.GetComponent<CorridorNode>();
-
-            List<Connection> corridorConnections = corridorNode.Connections.Where(c => ((int)c.ConnectionType & (int)ConnectionType.Inward) != 0).ToList();
-
-            for (int i = 0, ilen = corridorConnections.Count; i < ilen; i++)
-            {
-                if (corridorConnections[i].ClosedVisual != null)
-                {
-                    corridorConnections[i].ClosedVisual.SetActive(true);
-                }
-                if (corridorConnections[i].OpenVisual != null)
-                {
-                    corridorConnections[i].OpenVisual.SetActive(false);
+                    if (!toConnections[i].OpenVisual.activeInHierarchy)
+                    {
+                        toConnections[i].OpenVisual.SetActive(false);
+                    }
                 }
             }
 
-            rnd = Random.Range(0, corridorConnections.Count);
+            rnd = Random.Range(0, toConnections.Count);
 
-            Connection corridorConnection = corridorConnections[rnd];
+            Connection toConnection = toConnections[rnd];
 
-            Transform inwardTransform = corridorConnection.Transform;
-
+            Transform inwardTransform = toConnection.Transform;
+    
+            // rotate it...
+            RotateToEulerY(toGo.transform, (outwardTransform.eulerAngles.y - inwardTransform.eulerAngles.y) + 180);
+            // move it into place...
+            MoveToPosition(toGo.transform, outwardTransform.position - (inwardTransform.position - toGo.transform.position));
 
 
             // check for collisions
-            //optionalConnections.Remove(currentConnection);
-            roomNode.Connections.Remove(currentConnection);
 
-            //corridorConnections.Remove(corridorConnection);
-            corridorNode.Connections.Remove(corridorConnection);
+            
 
-            if (corridorConnection.ClosedVisual != null)
+            // if collision check passed...
+
+            fromNode.Connections.Remove(fromConnection);
+            toNode.Connections.Remove(toConnection);
+
+            if (fromConnection.ClosedVisual != null)
             {
-                corridorConnection.ClosedVisual.SetActive(false);
+                fromConnection.ClosedVisual.SetActive(false);
             }
-            if (corridorConnection.OpenVisual != null)
+            if (fromConnection.OpenVisual != null)
             {
-                corridorConnection.OpenVisual.SetActive(true);
+                fromConnection.OpenVisual.SetActive(true);
             }
 
-            // rotate it...
-            corridor.transform.rotation = Quaternion.Euler(0, (outwardTransform.eulerAngles.y - inwardTransform.eulerAngles.y) + 180, 0);
+            if (toConnection.ClosedVisual != null)
+            {
+                toConnection.ClosedVisual.SetActive(false);
+            }
+            if (toConnection.OpenVisual != null)
+            {
+                toConnection.OpenVisual.SetActive(true);
+            }
 
-            // move it into place...
-            corridor.transform.position = outwardTransform.position - (inwardTransform.position - corridor.transform.position);
-
-            roomNode.ConnectionPoints.Add(new ConnectionPoint {
-                NodeFrom = roomNode,
-                NodeTo = corridorNode,
-                ConnectionFrom = currentConnection,
-                ConnectionTo = corridorConnection
+            fromNode.ToConnections.Add(new ConnectionPoint {
+                OtherDungeonNode= toNode,
+                OtherConnection = toConnection,
+                SelfConnection = fromConnection
             });
 
-            yield return StartCoroutine(CreateNewRoom(corridorNode));
+            toNode.FromConnections.Add(new ConnectionPoint
+            {
+                OtherDungeonNode = fromNode,
+                OtherConnection = fromConnection,
+                SelfConnection = fromConnection
+            });
+
+            if (!isRoom)
+            {
+                RoomsCreated++;
+            }
+
+            if (RoomsCreated == RoomsMax)
+            {
+                yield break;
+            }
+
+            yield return StartCoroutine(CreateNewSegment(toNode, !isRoom));
+        }
+
+        private void RotateToEulerY(Transform trans, float eulerY)
+        {
+            if (eulerY > 180)
+            {
+                eulerY -= 360;
+            }
+            if (eulerY < -180)
+            {
+                eulerY += 360;
+            }
+
+            trans.rotation = Quaternion.Euler(0, eulerY, 0);
+        }
+
+        private IEnumerator RotateToEulerYOverTime(Transform trans, float eulerY)
+        {
+            float start = Mathf.RoundToInt(trans.rotation.eulerAngles.y);
+            float goal = Mathf.RoundToInt(eulerY);
+
+            if (goal > 180)
+            {
+                goal -= 360;
+            }
+            if (goal < -180)
+            {
+                goal += 360;
+            }
+
+            if (Mathf.Abs(start - goal) < .1f)
+            {
+                trans.rotation = Quaternion.Euler(0, goal, 0);
+                yield break;
+            }
+
+            float current = start;
+            float timePassed = 0.0f;
+            float desiredTime = 1.0f;
+
+            while (timePassed < desiredTime)
+            {
+                current = Mathf.LerpAngle(start, goal, timePassed / desiredTime);
+                trans.rotation = Quaternion.Euler(0, current, 0);
+                timePassed += Time.deltaTime;
+                yield return null;
+            }
+            trans.rotation = Quaternion.Euler(0, goal, 0);
+        }
+
+        private void MoveToPosition(Transform trans, Vector3 pos)
+        {
+            trans.position = pos;
+        }
+
+        private IEnumerator MoveToPositionOverTime(Transform trans, Vector3 pos)
+        {
+            Vector3 start = trans.position;
+            Vector3 goal = pos;
+
+            if (Vector3.Distance(start, goal) < .1f)
+            {
+                trans.position = goal;
+                yield break;
+            }
+
+            Vector3 current = start;
+            float timePassed = 0.0f;
+            float desiredTime = 1.0f;
+
+            while (timePassed < desiredTime)
+            {
+                current = Vector3.Lerp(start, goal, timePassed / desiredTime);
+                trans.position = current;
+                timePassed += Time.deltaTime;
+                yield return null;
+            }
+            trans.position = goal;
         }
     }
 }

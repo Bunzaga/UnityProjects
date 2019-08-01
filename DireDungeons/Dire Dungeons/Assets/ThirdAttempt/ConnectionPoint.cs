@@ -7,10 +7,8 @@ namespace DunGen
     [System.Serializable]
     public class ConnectionPoint
     {
-        public DungeonNode NodeFrom;
-        public DungeonNode NodeTo;
-
-        public Connection ConnectionFrom;
-        public Connection ConnectionTo;
+        public DungeonNode OtherDungeonNode;
+        public Connection OtherConnection;
+        public Connection SelfConnection;
     }
 }

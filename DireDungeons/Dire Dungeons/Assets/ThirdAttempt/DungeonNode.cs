@@ -5,7 +5,8 @@ namespace DunGen
 {
     public class DungeonNode : MonoBehaviour
     {
-        public List<ConnectionPoint> ConnectionPoints = new List<ConnectionPoint>();
+        public List<ConnectionPoint> FromConnections = new List<ConnectionPoint>();
+        public List<ConnectionPoint> ToConnections = new List<ConnectionPoint>();
 
         public List<Connection> Connections;
         public List<Connection> OptionalConnections;
