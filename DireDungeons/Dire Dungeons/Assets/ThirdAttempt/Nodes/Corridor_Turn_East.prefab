@@ -42,7 +42,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 3, y: 1, z: 6}
+  m_Size: {x: 2.5, y: 1, z: 5.5}
   m_Center: {x: 0, y: 0.5, z: -1.5}
 --- !u!1 &3003134282696519028
 GameObject:
@@ -86,7 +86,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 6, y: 1, z: 3}
+  m_Size: {x: 5.5, y: 1, z: 2.5}
   m_Center: {x: 1.5, y: 0.5, z: 0}
 --- !u!1 &4054699625865212500
 GameObject:
@@ -169,7 +169,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 1
-  m_StaticEditorFlags: 8
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &8759569522271277471
 Transform:
@@ -330,7 +330,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 8
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &8759569522865461365
 Transform:
@@ -407,7 +407,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 8
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &8759569523128475937
 Transform:
@@ -530,7 +530,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 1
-  m_StaticEditorFlags: 8
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &8759569523156767629
 Transform:
@@ -654,7 +654,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 1
-  m_StaticEditorFlags: 8
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &8759569523445187726
 Transform:
@@ -726,7 +726,6 @@ GameObject:
   - component: {fileID: 8759569523516907270}
   - component: {fileID: 5083752613321369917}
   - component: {fileID: 8759569523516907271}
-  - component: {fileID: 5378533152717900536}
   m_Layer: 0
   m_Name: Corridor_Turn_East
   m_TagString: Untagged
@@ -763,12 +762,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 179ae669737088c449720b8a78d3d6e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ConnectionPoints: []
+  FromConnections: []
+  ToConnections: []
   Connections:
   - {fileID: 8759569523139392655}
   - {fileID: 8759569522562853636}
   OptionalConnections:
   - {fileID: 8759569523304510383}
+  Colliders:
+  - {fileID: 7843972040324994339}
+  - {fileID: 6270555379992968380}
   Corridor: {fileID: 8759569523516907271}
 --- !u!114 &8759569523516907271
 MonoBehaviour:
@@ -783,17 +786,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CorridorNode: {fileID: 5083752613321369917}
---- !u!192 &5378533152717900536
-OcclusionArea:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8759569523516907384}
-  serializedVersion: 2
-  m_Size: {x: 6, y: 2, z: 6}
-  m_Center: {x: 1.5, y: 0.5, z: -1.5}
-  m_IsViewVolume: 1
 --- !u!1 &8759569523624254401
 GameObject:
   m_ObjectHideFlags: 0
@@ -810,7 +802,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 1
-  m_StaticEditorFlags: 8
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &8759569523624254400
 Transform:
@@ -887,7 +879,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 1
-  m_StaticEditorFlags: 8
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &8759569523687140800
 Transform:
@@ -964,7 +956,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 1
-  m_StaticEditorFlags: 8
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &8759569524015398579
 Transform:
@@ -1041,7 +1033,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 8
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &8759569524071983407
 Transform:

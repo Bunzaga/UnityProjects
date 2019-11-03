@@ -24,10 +24,15 @@ namespace DunGen
         public int RoomsCreated = 0;
         public int RoomsMax = 5;
 
+        public string PlacedNodeMask = "PlacedNode";
+        public LayerMask CollisionMask;
+
+        public GameObject boxPrefab;
 
         private void Awake()
         {
             StartCoroutine(CreateDungeon());
+           // CollisionMask = LayerMask.NameToLayer(PlacedNodeMask);
         }
 
         private IEnumerator CreateDungeon()
@@ -36,6 +41,10 @@ namespace DunGen
             DungeonNode currentNode = enterGameObject.GetComponent<DungeonNode>();
 
             RoomsCreated = 1;
+
+            enterGameObject.name = "Room 1";
+
+            SetNodeCollisionMask(currentNode, PlacedNodeMask);
 
             yield return StartCoroutine(CreateNewSegment(currentNode, true));
 
@@ -53,6 +62,15 @@ namespace DunGen
                 {
                     AddNodesToRoot(node.ToConnections[i].OtherDungeonNode);
                 }
+            }
+        }
+
+        private void SetNodeCollisionMask(DungeonNode dungeonNode, string mask)
+        {
+            for (int i = 0, ilen = dungeonNode.Colliders.Count; i < ilen; i++)
+            {
+                Collider col = dungeonNode.Colliders[i];
+                col.gameObject.layer = LayerMask.NameToLayer(mask);
             }
         }
 
@@ -82,6 +100,8 @@ namespace DunGen
 
             Connection fromConnection = fromConnections[rnd];
 
+            fromNode.Connections.Remove(fromConnection);
+
             Transform outwardTransform = fromConnection.Transform;
 
             GameObject toGo;
@@ -89,11 +109,12 @@ namespace DunGen
             {
                 int rndDir = Random.Range(0, 3);
                 toGo = Instantiate((rndDir == 0) ? CorridorStraight.gameObject : rndDir == 1 ? CorridorTurnEast.gameObject : CorridorTurnWest.gameObject);
-                
+                toGo.name = "Corridor " + RoomsCreated;
             }
             else
             {
                 toGo = Instantiate(RoomsCreated < RoomsMax-1 ? Room1.gameObject : EndRoom.gameObject);
+                toGo.name = "Room " + (RoomsCreated + 1);
             }
 
             toGo.transform.position = fromNode.transform.position;
@@ -125,20 +146,41 @@ namespace DunGen
             Connection toConnection = toConnections[rnd];
 
             Transform inwardTransform = toConnection.Transform;
-    
-            // rotate it...
-            RotateToEulerY(toGo.transform, (outwardTransform.eulerAngles.y - inwardTransform.eulerAngles.y) + 180);
-            // move it into place...
-            MoveToPosition(toGo.transform, outwardTransform.position - (inwardTransform.position - toGo.transform.position));
 
+            // rotate it...
+            //RotateToEulerY(toGo.transform, (outwardTransform.eulerAngles.y - inwardTransform.eulerAngles.y) + 180);
+            yield return StartCoroutine(RotateToEulerYOverTime(toGo.transform, (outwardTransform.eulerAngles.y - inwardTransform.eulerAngles.y) + 180));
+            // move it into place...
+            //MoveToPosition(toGo.transform, outwardTransform.position - (inwardTransform.position - toGo.transform.position));
+            yield return StartCoroutine(MoveToPositionOverTime(toGo.transform, outwardTransform.position - (inwardTransform.position - toGo.transform.position)));
 
             // check for collisions
+            if (NewNodeCollidesWithDungeon(toNode))
+            {
+                Debug.Log("collision found, do something...");
+                DungeonNode goBackNode = fromNode.FromConnections[0].OtherDungeonNode;
+                goBackNode.Connections.Add(fromNode.FromConnections[0].OtherConnection);
+                goBackNode.ToConnections.Remove(fromNode.FromConnections[0]);
+                Destroy(toNode.gameObject);
+                Destroy(fromNode.gameObject);
 
-            
-
+                if (isRoom)
+                {
+                    RoomsCreated--;
+                    yield return StartCoroutine(CreateNewSegment(goBackNode, false));
+                }
+                else
+                {
+                    yield return StartCoroutine(CreateNewSegment(goBackNode, true));
+                }
+                yield break;
+            }
+            else
+            {
+                SetNodeCollisionMask(toNode, PlacedNodeMask);
+            }
             // if collision check passed...
 
-            fromNode.Connections.Remove(fromConnection);
             toNode.Connections.Remove(toConnection);
 
             if (fromConnection.ClosedVisual != null)
@@ -179,21 +221,78 @@ namespace DunGen
 
             if (RoomsCreated == RoomsMax)
             {
+                
                 yield break;
             }
 
             yield return StartCoroutine(CreateNewSegment(toNode, !isRoom));
         }
 
+        private bool NewNodeCollidesWithDungeon(DungeonNode dungeonNode)
+        {
+            Vector3 center;
+            Vector3 halfExtents;
+            Collider[] results = new Collider[10];
+            Quaternion orientation = Quaternion.identity;
+                
+            for (int i = 0, ilen = dungeonNode.Colliders.Count; i < ilen; i++)
+            {
+                Collider col = dungeonNode.Colliders[i];
+
+                switch (col.GetType().Name)
+                {
+                    case nameof(BoxCollider):
+
+                        center = col.bounds.center;
+                        Debug.LogFormat("Center:{0}, {1}, {2}", center.x, center.y, center.z);
+                        halfExtents = dungeonNode.transform.TransformDirection(col.bounds.extents);
+                        orientation = dungeonNode.transform.rotation;
+
+                        var box = Instantiate(boxPrefab, center, orientation);
+                        box.transform.localScale = halfExtents * 2;
+                        box.transform.SetParent(col.transform.parent, true);
+
+                        for(int j = 0, jlen = results.Length; j < jlen; j++)
+                        {
+                            results[j] = null;
+                        }
+
+                        int collisions = Physics.OverlapBoxNonAlloc(center, col.bounds.extents, results, orientation, CollisionMask, QueryTriggerInteraction.Collide);
+                        if (collisions > 0)
+                        {
+                            for (int hitIndex = 0, resultLen = results.Length; hitIndex < resultLen; hitIndex++)
+                            {
+                                if (results[hitIndex] != null)
+                                {
+                                    Debug.LogFormat("Checking Result[{0}]", hitIndex);
+                                    Debug.Log(dungeonNode.gameObject.name + ": There was a hit! " + hitIndex);
+                                    Debug.Log(results[hitIndex].transform.root.name);
+                                    return true;
+                                }
+                                else
+                                {
+                                }
+                            }
+                        }
+                        break;
+
+                    case nameof(SphereCollider):
+                        break;
+                }
+                
+            }
+            return false;
+        }
+
         private void RotateToEulerY(Transform trans, float eulerY)
         {
             if (eulerY > 180)
             {
-                eulerY -= 360;
+                eulerY = 360 - eulerY;
             }
             if (eulerY < -180)
             {
-                eulerY += 360;
+                eulerY = 360 + eulerY;
             }
 
             trans.rotation = Quaternion.Euler(0, eulerY, 0);
@@ -204,13 +303,13 @@ namespace DunGen
             float start = Mathf.RoundToInt(trans.rotation.eulerAngles.y);
             float goal = Mathf.RoundToInt(eulerY);
 
-            if (goal > 180)
+            if (eulerY > 180)
             {
-                goal -= 360;
+                eulerY = 360 - eulerY;
             }
-            if (goal < -180)
+            if (eulerY < -180)
             {
-                goal += 360;
+                eulerY = 360 + eulerY;
             }
 
             if (Mathf.Abs(start - goal) < .1f)

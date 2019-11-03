@@ -469,6 +469,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: BasicDungeonGenerator
       objectReference: {fileID: 0}
+    - target: {fileID: 2935307596414575606, guid: 10f4ba4897c24434c95bfcb060357b3a,
+        type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8055191816170996856, guid: 10f4ba4897c24434c95bfcb060357b3a,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -534,5 +539,36 @@ PrefabInstance:
       propertyPath: RoomsMax
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 3346074738475823264, guid: 10f4ba4897c24434c95bfcb060357b3a,
+        type: 3}
+      propertyPath: PlacedRoomMask.m_Bits
+      value: 512
+      objectReference: {fileID: 0}
+    - target: {fileID: 3346074738475823264, guid: 10f4ba4897c24434c95bfcb060357b3a,
+        type: 3}
+      propertyPath: PlacedCorridorMask.m_Bits
+      value: 1024
+      objectReference: {fileID: 0}
+    - target: {fileID: 3346074738475823264, guid: 10f4ba4897c24434c95bfcb060357b3a,
+        type: 3}
+      propertyPath: CollisionMask.m_Bits
+      value: 512
+      objectReference: {fileID: 0}
+    - target: {fileID: 3346074738475823264, guid: 10f4ba4897c24434c95bfcb060357b3a,
+        type: 3}
+      propertyPath: PlacedRoomMask
+      value: PlacedRoom
+      objectReference: {fileID: 0}
+    - target: {fileID: 3346074738475823264, guid: 10f4ba4897c24434c95bfcb060357b3a,
+        type: 3}
+      propertyPath: PlacedCorridorMask
+      value: PlacedCorridor
+      objectReference: {fileID: 0}
+    - target: {fileID: 3346074738475823264, guid: 10f4ba4897c24434c95bfcb060357b3a,
+        type: 3}
+      propertyPath: boxPrefab
+      value: 
+      objectReference: {fileID: 6689243322327139245, guid: 148db608a471d3e47b1a45da40d8eba1,
+        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 10f4ba4897c24434c95bfcb060357b3a, type: 3}

@@ -10,5 +10,7 @@ namespace DunGen
 
         public List<Connection> Connections;
         public List<Connection> OptionalConnections;
+
+        public List<Collider> Colliders = new List<Collider>();
     }
 }

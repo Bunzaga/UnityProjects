@@ -42,7 +42,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 3, y: 1, z: 6}
+  m_Size: {x: 2.5, y: 1, z: 5.5}
   m_Center: {x: 0, y: 0.5, z: -1.5}
 --- !u!1 &3404822520655886933
 GameObject:
@@ -60,7 +60,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 8
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &3404822520655886934
 Transform:
@@ -229,7 +229,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 1
-  m_StaticEditorFlags: 8
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &3404822520934307768
 Transform:
@@ -301,7 +301,6 @@ GameObject:
   - component: {fileID: 3404822521139253416}
   - component: {fileID: 7131437634153354726}
   - component: {fileID: 3404822521139253423}
-  - component: {fileID: 4192280211810600821}
   m_Layer: 0
   m_Name: Corridor_Turn_West
   m_TagString: Untagged
@@ -338,12 +337,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 179ae669737088c449720b8a78d3d6e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ConnectionPoints: []
+  FromConnections: []
+  ToConnections: []
   Connections:
   - {fileID: 3404822520877890546}
   - {fileID: 3404822520922806621}
   OptionalConnections:
   - {fileID: 3404822522040254628}
+  Colliders:
+  - {fileID: 6663052820979568696}
+  - {fileID: 3293428678125624786}
   Corridor: {fileID: 3404822521139253423}
 --- !u!114 &3404822521139253423
 MonoBehaviour:
@@ -358,17 +361,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CorridorNode: {fileID: 7131437634153354726}
---- !u!192 &4192280211810600821
-OcclusionArea:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3404822521139253422}
-  serializedVersion: 2
-  m_Size: {x: 6, y: 2, z: 6}
-  m_Center: {x: -1.5, y: 0.5, z: -1.5}
-  m_IsViewVolume: 1
 --- !u!1 &3404822521352541998
 GameObject:
   m_ObjectHideFlags: 0
@@ -385,7 +377,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 1
-  m_StaticEditorFlags: 8
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &3404822521352541999
 Transform:
@@ -500,7 +492,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 1
-  m_StaticEditorFlags: 8
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &3404822521555370457
 Transform:
@@ -577,7 +569,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 8
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &3404822521603064641
 Transform:
@@ -654,7 +646,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 1
-  m_StaticEditorFlags: 8
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &3404822521625236497
 Transform:
@@ -778,7 +770,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 1
-  m_StaticEditorFlags: 8
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &3404822522050510825
 Transform:
@@ -855,7 +847,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 8
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &3404822522141453290
 Transform:
@@ -932,7 +924,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 1
-  m_StaticEditorFlags: 8
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &3404822522299979811
 Transform:
@@ -1100,5 +1092,5 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 6, y: 1, z: 3}
+  m_Size: {x: 5.5, y: 1, z: 2.5}
   m_Center: {x: -1.5, y: 0.5, z: 0}
